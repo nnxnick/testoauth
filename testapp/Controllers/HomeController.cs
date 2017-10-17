@@ -38,7 +38,17 @@ namespace testapp.Controllers
 			catch { }
 			if (sgn != null && (string.IsNullOrEmpty(sgn.login) == false))
 			{
-				clientauth.globals.secsetuser(sgn.login);
+				{
+					System.Security.Principal.GenericIdentity newUser =
+						new System.Security.Principal.GenericIdentity(sgn.login);
+					System.Threading.Thread.CurrentPrincipal =
+						new System.Security.Principal.GenericPrincipal(newUser, clientauth.globals.brl);
+					if (System.Web.HttpContext.Current != null)
+					{
+						System.Web.HttpContext.Current.User =
+							System.Threading.Thread.CurrentPrincipal;
+					}
+				}
 				System.Web.Security.FormsAuthentication.SetAuthCookie(sgn.login, false);
 			}
 
